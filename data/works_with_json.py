@@ -57,6 +57,11 @@ class VacsToJSONAbs(ABC):
     def filter_by_keyword(key, top_vacs, vac_filter):
         pass
 
+    @staticmethod
+    @abstractmethod
+    def clear_file():
+        pass
+
 
 class VacanciesToJSON(VacsToJSONAbs):
     """
@@ -225,3 +230,11 @@ class VacanciesToJSON(VacsToJSONAbs):
                                                                 top["published_at"], top["salary min"],
                                                                 top["salary max"], top["currency"], top["locality"],
                                                                 top["description"], top["id"], top["requirements"]))
+
+    @staticmethod
+    def clear_file():
+        """
+        Метод для очистки файла с вакансиями
+        """
+        with open("src/vacancies.json", "w", encoding="UTF-8"):
+            pass
