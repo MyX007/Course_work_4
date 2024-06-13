@@ -1,4 +1,4 @@
-from data import work_with_API_and_vacancies, works_with_json
+from src import work_with_API_and_vacancies, works_with_json
 
 # Создание экземпляров класса и приветствие
 hh_api = work_with_API_and_vacancies.HeadHunterAPI()

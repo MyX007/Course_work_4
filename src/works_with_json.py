@@ -1,6 +1,6 @@
 import json
 from abc import ABC, abstractmethod
-from data import work_with_API_and_vacancies
+from src import work_with_API_and_vacancies
 
 
 class VacsToJSONAbs(ABC):
