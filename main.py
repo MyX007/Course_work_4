@@ -1,12 +1,53 @@
-from data import work_with_API_and_vacancies, works_with_json
+from src.work_with_api import HeadHunterAPI
+from src.work_with_vacancies import Vacancies
+from src.work_with_json import VacanciesToJSON
+from data.config import area
 
 # Создание экземпляров класса и приветствие
-hh_api = work_with_API_and_vacancies.HeadHunterAPI()
-js_vacs = works_with_json.VacanciesToJSON()
+hh_api = HeadHunterAPI()
+py_vacs = Vacancies
+js_vacs = VacanciesToJSON
+
 print("Здравствуйте! Вы используете программу для поиска работы на сайте hh.ru")
 
 
-# noinspection PyTypeChecker
+def create_vacs(vacs_list):
+    created_vacs = []
+    for vac in vacs_list:
+        vacs = py_vacs(vac["name"],
+                       vac["employer"]["name"],
+                       vac["alternate_url"],
+                       vac["published_at"],
+                       (vac.get('salary', {}) or {}).get('from', 0),
+                       (vac.get('salary', {}) or {}).get('to', 0),
+                       (vac.get('salary', {}) or {}).get('currency', 0),
+                       vac["area"]["name"],
+                       vac["snippet"]["responsibility"],
+                       vac["id"],
+                       vac["snippet"]["requirement"])
+        created_vacs.append(vacs.format_to_save_in_json())
+    return created_vacs
+
+
+def print_vacs(vac_list, max_vacs=100):
+    for vac in vac_list[:max_vacs]:
+        print(py_vacs(vac["name"],
+                      vac["employer"],
+                      vac["link"],
+                      vac["published_at"],
+                      vac["salary min"],
+                      vac["salary max"],
+                      vac["currency"],
+                      vac["locality"],
+                      vac["description"],
+                      vac["id"],
+                      vac["requirements"]))
+
+
+def get_area(user_area: str) -> str:
+    return area.get(user_area)
+
+
 def main_func():
     """
     Функция интерактива с пользователем
@@ -33,40 +74,31 @@ def main_func():
                 vac_only_with_salary = True
 
             # Выбор страны для поиска вакансий
-            vac_area = str(input("Выберите страну для поиска вакансий из списка ниже (введите номер): "
-                                 "\n1. Россия\n2. Беларусь\n"
-                                 "3. Казахстан\n4. Узбекистан\n5. Кыргызстан\n6. Грузия\n7. Азербайджан\n"
-                                 "8. Другие регионы\n0. Не имеет значения\nВведите номер страны: "))
+            user_area = str(input("Выберите страну для поиска вакансий из списка ниже (введите номер): "
+                                  "\n1. Россия\n2. Беларусь\n"
+                                  "3. Казахстан\n4. Узбекистан\n5. Кыргызстан\n6. Грузия\n7. Азербайджан\n"
+                                  "8. Другие регионы\n0. Не имеет значения\nВведите номер страны: "))
 
-            if vac_area == "1":
-                vac_area = "113"
-            elif vac_area == "2":
-                vac_area = "16"
-            elif vac_area == "3":
-                vac_area = "40"
-            elif vac_area == "4":
-                vac_area = "97"
-            elif vac_area == "5":
-                vac_area = "48"
-            elif vac_area == "6":
-                vac_area = "28"
-            elif vac_area == "7":
-                vac_area = "9"
-            elif vac_area == "8":
-                vac_area = "1001"
-            elif vac_area == "0" or "":
+            if user_area in area.keys():
+                vac_area = get_area(user_area)
+
+            else:
                 vac_area = None
 
             # Получениe вакансий на основе выше перечисленных данных
             # noinspection PyTypeChecker
             hh_api_vacs = hh_api.get_vacs(vac_name, vac_only_with_salary, vac_area)
 
+            vacs_list = []
+
+            for vac in hh_api_vacs:
+                vacs_list.append(vac)
+
             # Сохранение вакансий в JSON файл
-            js_vacs.save_vacs(hh_api_vacs)
+            js_vacs.save_vacs(create_vacs(vacs_list))
 
             # Вывод полученных вакансий на экран
-            for vacs in hh_api_vacs:
-                print(vacs)
+            print_vacs(create_vacs(vacs_list))
 
             continue
         if functions == "2":
@@ -95,13 +127,16 @@ def main_func():
 
                     if sort_vacs == "1":
                         # Сортировка вакансий по возрастанию минимальной зарплаты и вывод N количества вакансий на экран
-                        js_vacs.filter_by_min_salary(int(input("\nВведите минимальную зарплату: ")),
-                                                     int(input("\nВведите максимальное количесвто вакансий: ")))
+                        min_salary = int(input("\nВведите минимальную зарплату: "))
+                        max_vacs = int(input("\nВведите максимальное количесвто вакансий: "))
+                        filtred_vacs = js_vacs.filter_by_min_salary(min_salary, max_vacs)
+                        print_vacs(filtred_vacs, max_vacs)
                         continue
                     elif sort_vacs == "2":
                         # Сортировка вакансий по убыванию максимальной зарплаты и вывод топ-N вакансий на экран
-                        js_vacs.filter_by_max_salary(int(input("\nВведите минимальную зарплату: ")),
-                                                     int(input("\nВведите максимальное количесвто вакансий: ")))
+                        max_salary = int(input("\nВведите минимальную зарплату: "))
+                        max_vacs = int(input("\nВведите максимальное количесвто вакансий: "))
+                        js_vacs.filter_by_max_salary(max_salary, max_vacs)
                         continue
 
                     elif sort_vacs == "0":
@@ -116,9 +151,10 @@ def main_func():
 
                 elif filter_salary == "2":
                     # Фильтрует вакансии по диапозону зарплаты (min-max)
-                    js_vacs.filter_by_salary_range(str(input("Введите диапозон зарплаты через дефис ("
-                                                             "прим. 50000-100000)")),
-                                                   int(input("\nВведите максимальное количесвто вакансий: ")))
+                    salary_range = str(input("Введите диапозон зарплаты через дефис (прим. 50000-100000)"))
+                    max_vacs = int(input("\nВведите максимальное количесвто вакансий: "))
+                    js_vacs.filter_by_salary_range(salary_range, max_vacs)
+
                     continue
 
                 elif filter_salary == "0":
@@ -133,21 +169,28 @@ def main_func():
 
             elif filter_funcs == "2":
                 # Фильтрует вакансии по ключевым словам в названии
-                js_vacs.filter_by_keyword(input("Введите ключевое слово: "),
-                                          int(input("\nВведите максимальное количесвто вакансий: ")),
-                                          js_vacs.find_vacs_by_keyword_in_name)
+                key = input("Введите ключевое слово: ")
+                max_vacs = int(input("\nВведите максимальное количесвто вакансий: "))
+
+                filtred_vacs = js_vacs.find_vacs_by_keyword_in_name(key)
+                print_vacs(filtred_vacs, max_vacs)
+
                 continue
             elif filter_funcs == "3":
                 # Фильтрует вакансии по ключевым словам в описании
-                js_vacs.filter_by_keyword(input("Введите ключевое слово: "),
-                                          int(input("\nВведите максимальное количесвто вакансий: ")),
-                                          js_vacs.find_vacs_by_keyword_in_description)
+                key = input("Введите ключевое слово: ")
+                max_vacs = int(input("\nВведите максимальное количесвто вакансий: "))
+
+                filtred_vacs = js_vacs.find_vacs_by_keyword_in_description(key)
+                print_vacs(filtred_vacs, max_vacs)
                 continue
             elif filter_funcs == "4":
                 # Фильтрует вакансии по ключевым словам в требованиях
-                js_vacs.filter_by_keyword(input("Введите ключевое слово: "),
-                                          int(input("\nВведите максимальное количесвто вакансий: ")),
-                                          js_vacs.find_vacs_by_keyword_in_requirements)
+                key = input("Введите ключевое слово: ")
+                max_vacs = int(input("\nВведите максимальное количесвто вакансий: "))
+
+                filtred_vacs = js_vacs.find_vacs_by_keyword_in_requirements(key)
+                print_vacs(filtred_vacs, max_vacs)
                 continue
             elif filter_funcs == "0":
                 # Возвращает пользователся к началу программы
@@ -166,7 +209,7 @@ def main_func():
 
         elif functions == "4":
             # Выводит на экран все вакансии из файла с вакансиями
-            js_vacs.load_vacs()
+            print_vacs(js_vacs.load_vacs())
             continue
 
         elif functions == "5":

@@ -1,9 +1,8 @@
-from abc import ABC, abstractmethod
-import requests
 import datetime
+from abc import ABC, abstractmethod
 
 
-class Vacancies(ABC):
+class BaseVacancies(ABC):
     """
     Абстрактный класс для работы с вакансиями
     """
@@ -32,7 +31,7 @@ class Vacancies(ABC):
         pass
 
 
-class WorkWithVacancies(Vacancies):
+class Vacancies(BaseVacancies):
     """
     Класс для работы с вакансиями
     """
@@ -99,7 +98,7 @@ class WorkWithVacancies(Vacancies):
         Метод для вывода информации об экземпляре класса на экран пользователя
 
         """
-        WorkWithVacancies.validate(self)
+        Vacancies.validate(self)
         return (f"\nВакансия: {self.name}\nЗарплата: {self.salary_min} {self.salary_max} {self.currency}\n"
                 f"Работодатель: {self.employer}\nОпубликовано: {self.published_at}\nНаселенный пункт: {self.locality}\n"
                 f"Описание: {self.description}\nТребования: {self.requirements}\nID Вакансии: {self.id_vac}\n"
@@ -117,6 +116,7 @@ class WorkWithVacancies(Vacancies):
         """
         Метод для форматирования экземпляра класса для дальнейшей записи в json файл
         """
+
         return {
             "name": self.name,
             "published_at": self.published_at,
@@ -130,60 +130,3 @@ class WorkWithVacancies(Vacancies):
             "id": self.id_vac,
             "link": self.link,
         }
-
-
-class API(ABC):
-    """
-    Абстрактный класс для работы с API
-    """
-
-    @abstractmethod
-    def __init__(self):
-        pass
-
-    @abstractmethod
-    def get_vacs(self, name, only_with_salary, area):
-        pass
-
-
-class HeadHunterAPI(API):
-    """
-    Класс для работы с API hh.ru
-    """
-    def __init__(self, api_url='https://api.hh.ru/vacancies'):
-        """
-        Конструктор класса
-        """
-        self.api_url = api_url
-
-    def get_vacs(self, name, only_with_salary=False, area=None):
-        """
-        Метод для получения вакансий по заданным параметрам с сайта hh.ru.
-        Возвращает экземпляр класса WorkWithVacancies.
-        """
-
-        params = {
-            "text": name,
-            "page": 0,
-            "per_page": 100,
-            "only_with_salary": only_with_salary,
-            "area": area
-        }
-        response = requests.get(self.api_url, params)
-
-        return [
-            WorkWithVacancies(
-                vac_info["name"],
-                vac_info["employer"]["name"],
-                vac_info["alternate_url"],
-                vac_info["published_at"],
-                (vac_info.get('salary', {}) or {}).get('from', 0),
-                (vac_info.get('salary', {}) or {}).get('to', 0),
-                (vac_info.get('salary', {}) or {}).get('currency', 0),
-                vac_info["area"]["name"],
-                vac_info["snippet"]["responsibility"],
-                vac_info["id"],
-                vac_info["snippet"]["requirement"]
-            )
-            for vac_info in response.json()["items"]
-        ]

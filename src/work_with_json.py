@@ -1,6 +1,5 @@
 import json
 from abc import ABC, abstractmethod
-from data import work_with_API_and_vacancies
 
 
 class VacsToJSONAbs(ABC):
@@ -54,11 +53,6 @@ class VacsToJSONAbs(ABC):
 
     @staticmethod
     @abstractmethod
-    def filter_by_keyword(key, top_vacs, vac_filter):
-        pass
-
-    @staticmethod
-    @abstractmethod
     def clear_file():
         pass
 
@@ -73,7 +67,7 @@ class VacanciesToJSON(VacsToJSONAbs):
         Метод для сохранения вакансий в json файл
         """
         with open("src/vacancies.json", "w", encoding="UTF-8") as file:
-            json.dump([vac.format_to_save_in_json() for vac in vacs_list], file,
+            json.dump([vac for vac in vacs_list], file,
                       indent=4, ensure_ascii=False, sort_keys=False)
 
     @classmethod
@@ -151,11 +145,7 @@ class VacanciesToJSON(VacsToJSONAbs):
                     filtred_salary.append(salary)
             sorted_vacs = sorted(filtred_salary, key=lambda x: x.get("salary min", ""), reverse=False)
 
-            for top in sorted_vacs[:quantity_vacs]:
-                print(work_with_API_and_vacancies.WorkWithVacancies(top["name"], top["employer"], top["link"],
-                                                                    top["published_at"], top["salary min"],
-                                                                    top["salary max"], top["currency"], top["locality"],
-                                                                    top["description"], top["id"], top["requirements"]))
+            return sorted_vacs
 
     @staticmethod
     def filter_by_max_salary(max_salary, quantity_vacs):
@@ -176,11 +166,7 @@ class VacanciesToJSON(VacsToJSONAbs):
 
             sorted_vacs = sorted(filtred_salary, key=lambda x: x.get("salary max", ""), reverse=True)
 
-            for top in sorted_vacs[:quantity_vacs]:
-                print(work_with_API_and_vacancies.WorkWithVacancies(top["name"], top["employer"], top["link"],
-                                                                    top["published_at"], top["salary min"],
-                                                                    top["salary max"], top["currency"], top["locality"],
-                                                                    top["description"], top["id"], top["requirements"]))
+            return sorted_vacs
 
     @staticmethod
     def filter_by_salary_range(salary_range, top_vacs):
@@ -199,11 +185,7 @@ class VacanciesToJSON(VacsToJSONAbs):
                     filtred_salary.append(salary)
             sorted_vacs = sorted(filtred_salary, key=lambda x: x.get("salary min", ""), reverse=False)
 
-            for top in sorted_vacs[:top_vacs]:
-                print(work_with_API_and_vacancies.WorkWithVacancies(top["name"], top["employer"], top["link"],
-                                                                    top["published_at"], top["salary min"],
-                                                                    top["salary max"], top["currency"], top["locality"],
-                                                                    top["description"], top["id"], top["requirements"]))
+            return sorted_vacs
 
     @staticmethod
     def load_vacs():
@@ -213,23 +195,7 @@ class VacanciesToJSON(VacsToJSONAbs):
         with open("src/vacancies.json", "r", encoding="UTF-8") as file:
             vacancies = json.load(file)
 
-            for top in vacancies:
-                print(work_with_API_and_vacancies.WorkWithVacancies(top["name"], top["employer"], top["link"],
-                                                                    top["published_at"], top["salary min"],
-                                                                    top["salary max"], top["currency"], top["locality"],
-                                                                    top["description"], top["id"], top["requirements"]))
-
-    @staticmethod
-    def filter_by_keyword(key, top_vacs, vac_filter):
-        """
-        Метод для фильрации вакансий по ключевым словам
-        """
-
-        for top in vac_filter(key)[:top_vacs]:
-            print(work_with_API_and_vacancies.WorkWithVacancies(top["name"], top["employer"], top["link"],
-                                                                top["published_at"], top["salary min"],
-                                                                top["salary max"], top["currency"], top["locality"],
-                                                                top["description"], top["id"], top["requirements"]))
+            return vacancies
 
     @staticmethod
     def clear_file():
