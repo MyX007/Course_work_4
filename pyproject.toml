@@ -6,6 +6,7 @@ authors = ["Vladimir Blyntsev <blyncev@yandex.ru>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+requests = "^2.32.3"
 
 [tool.poetry.dev-dependencies]
 
