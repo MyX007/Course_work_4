@@ -1,6 +1,6 @@
 import json
 from abc import ABC, abstractmethod
-from src import work_with_API_and_vacancies
+from src import work_with_api_and_vacancies
 
 
 class VacsToJSONAbs(ABC):
@@ -152,7 +152,7 @@ class VacanciesToJSON(VacsToJSONAbs):
             sorted_vacs = sorted(filtred_salary, key=lambda x: x.get("salary min", ""), reverse=False)
 
             for top in sorted_vacs[:quantity_vacs]:
-                print(work_with_API_and_vacancies.WorkWithVacancies(top["name"], top["employer"], top["link"],
+                print(work_with_api_and_vacancies.WorkWithVacancies(top["name"], top["employer"], top["link"],
                                                                     top["published_at"], top["salary min"],
                                                                     top["salary max"], top["currency"], top["locality"],
                                                                     top["description"], top["id"], top["requirements"]))
@@ -177,7 +177,7 @@ class VacanciesToJSON(VacsToJSONAbs):
             sorted_vacs = sorted(filtred_salary, key=lambda x: x.get("salary max", ""), reverse=True)
 
             for top in sorted_vacs[:quantity_vacs]:
-                print(work_with_API_and_vacancies.WorkWithVacancies(top["name"], top["employer"], top["link"],
+                print(work_with_api_and_vacancies.WorkWithVacancies(top["name"], top["employer"], top["link"],
                                                                     top["published_at"], top["salary min"],
                                                                     top["salary max"], top["currency"], top["locality"],
                                                                     top["description"], top["id"], top["requirements"]))
@@ -200,7 +200,7 @@ class VacanciesToJSON(VacsToJSONAbs):
             sorted_vacs = sorted(filtred_salary, key=lambda x: x.get("salary min", ""), reverse=False)
 
             for top in sorted_vacs[:top_vacs]:
-                print(work_with_API_and_vacancies.WorkWithVacancies(top["name"], top["employer"], top["link"],
+                print(work_with_api_and_vacancies.WorkWithVacancies(top["name"], top["employer"], top["link"],
                                                                     top["published_at"], top["salary min"],
                                                                     top["salary max"], top["currency"], top["locality"],
                                                                     top["description"], top["id"], top["requirements"]))
@@ -214,7 +214,7 @@ class VacanciesToJSON(VacsToJSONAbs):
             vacancies = json.load(file)
 
             for top in vacancies:
-                print(work_with_API_and_vacancies.WorkWithVacancies(top["name"], top["employer"], top["link"],
+                print(work_with_api_and_vacancies.WorkWithVacancies(top["name"], top["employer"], top["link"],
                                                                     top["published_at"], top["salary min"],
                                                                     top["salary max"], top["currency"], top["locality"],
                                                                     top["description"], top["id"], top["requirements"]))
@@ -226,7 +226,7 @@ class VacanciesToJSON(VacsToJSONAbs):
         """
 
         for top in vac_filter(key)[:top_vacs]:
-            print(work_with_API_and_vacancies.WorkWithVacancies(top["name"], top["employer"], top["link"],
+            print(work_with_api_and_vacancies.WorkWithVacancies(top["name"], top["employer"], top["link"],
                                                                 top["published_at"], top["salary min"],
                                                                 top["salary max"], top["currency"], top["locality"],
                                                                 top["description"], top["id"], top["requirements"]))
