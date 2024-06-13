@@ -2,7 +2,7 @@ import datetime
 from abc import ABC, abstractmethod
 
 
-class Vacancies(ABC):
+class BaseVacancies(ABC):
     """
     Абстрактный класс для работы с вакансиями
     """
@@ -31,7 +31,7 @@ class Vacancies(ABC):
         pass
 
 
-class WorkWithVacancies(Vacancies):
+class Vacancies(BaseVacancies):
     """
     Класс для работы с вакансиями
     """
@@ -98,7 +98,7 @@ class WorkWithVacancies(Vacancies):
         Метод для вывода информации об экземпляре класса на экран пользователя
 
         """
-        WorkWithVacancies.validate(self)
+        Vacancies.validate(self)
         return (f"\nВакансия: {self.name}\nЗарплата: {self.salary_min} {self.salary_max} {self.currency}\n"
                 f"Работодатель: {self.employer}\nОпубликовано: {self.published_at}\nНаселенный пункт: {self.locality}\n"
                 f"Описание: {self.description}\nТребования: {self.requirements}\nID Вакансии: {self.id_vac}\n"
@@ -116,6 +116,7 @@ class WorkWithVacancies(Vacancies):
         """
         Метод для форматирования экземпляра класса для дальнейшей записи в json файл
         """
+
         return {
             "name": self.name,
             "published_at": self.published_at,
@@ -129,5 +130,3 @@ class WorkWithVacancies(Vacancies):
             "id": self.id_vac,
             "link": self.link,
         }
-
-

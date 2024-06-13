@@ -1,8 +1,5 @@
 from abc import ABC, abstractmethod
-
 import requests
-
-from src.work_with_vacancies import WorkWithVacancies
 
 
 class API(ABC):
@@ -44,19 +41,7 @@ class HeadHunterAPI(API):
         }
         response = requests.get(self.api_url, params)
 
-        return [
-            WorkWithVacancies(
-                vac_info["name"],
-                vac_info["employer"]["name"],
-                vac_info["alternate_url"],
-                vac_info["published_at"],
-                (vac_info.get('salary', {}) or {}).get('from', 0),
-                (vac_info.get('salary', {}) or {}).get('to', 0),
-                (vac_info.get('salary', {}) or {}).get('currency', 0),
-                vac_info["area"]["name"],
-                vac_info["snippet"]["responsibility"],
-                vac_info["id"],
-                vac_info["snippet"]["requirement"]
-            )
-            for vac_info in response.json()["items"]
-        ]
+        if response.status_code == 200:
+            return response.json()["items"]
+        else:
+            return []
