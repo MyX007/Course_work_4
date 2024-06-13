@@ -1,9 +1,12 @@
-from src import works_with_json
-from src import work_with_api_and_vacancies
+from src import work_with_json
+from src import work_with_vacancies
+from src import work_with_api
 
 # Создание экземпляров класса и приветствие
-hh_api = work_with_api_and_vacancies.HeadHunterAPI()
-js_vacs = works_with_json.VacanciesToJSON()
+hh_api = work_with_api.HeadHunterAPI()
+py_vacs = work_with_vacancies.WorkWithVacancies
+js_vacs = work_with_json.VacanciesToJSON()
+
 print("Здравствуйте! Вы используете программу для поиска работы на сайте hh.ru")
 
 
