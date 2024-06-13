@@ -1,16 +1,20 @@
-from src import work_with_json
-from src import work_with_vacancies
-from src import work_with_api
+from src.work_with_api import HeadHunterAPI
+from src.work_with_vacancies import WorkWithVacancies
+from src.work_with_json import VacanciesToJSON
+from data.config import area
 
 # Создание экземпляров класса и приветствие
-hh_api = work_with_api.HeadHunterAPI()
-py_vacs = work_with_vacancies.WorkWithVacancies
-js_vacs = work_with_json.VacanciesToJSON()
+hh_api = HeadHunterAPI()
+py_vacs = WorkWithVacancies
+js_vacs = VacanciesToJSON
 
 print("Здравствуйте! Вы используете программу для поиска работы на сайте hh.ru")
 
 
-# noinspection PyTypeChecker
+def get_area(user_area: str) -> str:
+    return area.get(user_area)
+
+
 def main_func():
     """
     Функция интерактива с пользователем
@@ -37,28 +41,15 @@ def main_func():
                 vac_only_with_salary = True
 
             # Выбор страны для поиска вакансий
-            vac_area = str(input("Выберите страну для поиска вакансий из списка ниже (введите номер): "
-                                 "\n1. Россия\n2. Беларусь\n"
-                                 "3. Казахстан\n4. Узбекистан\n5. Кыргызстан\n6. Грузия\n7. Азербайджан\n"
-                                 "8. Другие регионы\n0. Не имеет значения\nВведите номер страны: "))
+            user_area = str(input("Выберите страну для поиска вакансий из списка ниже (введите номер): "
+                                  "\n1. Россия\n2. Беларусь\n"
+                                  "3. Казахстан\n4. Узбекистан\n5. Кыргызстан\n6. Грузия\n7. Азербайджан\n"
+                                  "8. Другие регионы\n0. Не имеет значения\nВведите номер страны: "))
 
-            if vac_area == "1":
-                vac_area = "113"
-            elif vac_area == "2":
-                vac_area = "16"
-            elif vac_area == "3":
-                vac_area = "40"
-            elif vac_area == "4":
-                vac_area = "97"
-            elif vac_area == "5":
-                vac_area = "48"
-            elif vac_area == "6":
-                vac_area = "28"
-            elif vac_area == "7":
-                vac_area = "9"
-            elif vac_area == "8":
-                vac_area = "1001"
-            elif vac_area == "0" or "":
+            if user_area in area.keys():
+                vac_area = get_area(user_area)
+
+            else:
                 vac_area = None
 
             # Получениe вакансий на основе выше перечисленных данных

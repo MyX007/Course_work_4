@@ -1,5 +1,6 @@
 import json
 from abc import ABC, abstractmethod
+
 from src import work_with_vacancies
 
 
@@ -152,10 +153,10 @@ class VacanciesToJSON(VacsToJSONAbs):
             sorted_vacs = sorted(filtred_salary, key=lambda x: x.get("salary min", ""), reverse=False)
 
             for top in sorted_vacs[:quantity_vacs]:
-                print(work_with_api_and_vacancies.WorkWithVacancies(top["name"], top["employer"], top["link"],
-                                                                    top["published_at"], top["salary min"],
-                                                                    top["salary max"], top["currency"], top["locality"],
-                                                                    top["description"], top["id"], top["requirements"]))
+                return work_with_vacancies.WorkWithVacancies(top["name"], top["employer"], top["link"],
+                                                             top["published_at"], top["salary min"],
+                                                             top["salary max"], top["currency"], top["locality"],
+                                                             top["description"], top["id"], top["requirements"])
 
     @staticmethod
     def filter_by_max_salary(max_salary, quantity_vacs):

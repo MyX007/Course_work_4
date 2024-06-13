@@ -1,6 +1,5 @@
-from abc import ABC, abstractmethod
-import requests
 import datetime
+from abc import ABC, abstractmethod
 
 
 class Vacancies(ABC):

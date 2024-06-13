@@ -1,6 +1,8 @@
-import requests
 from abc import ABC, abstractmethod
-from work_with_vacancies import WorkWithVacancies
+
+import requests
+
+from src.work_with_vacancies import WorkWithVacancies
 
 
 class API(ABC):
